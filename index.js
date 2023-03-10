@@ -25,15 +25,15 @@ function reset() {
 bot.command('leave', async (ctx) => {
 	let plyr = players.find((p) => ctx.from.id === p.chat.from.id);
 	if (!plyr) {
-		return await ctx.sendMessage('You are not in the game');
+		return await ctx.sendMessage('You already left 😁');
 	}
-	await ctx.sendMessage('Sad to see you go 😔, See you soon 👋');
+	await ctx.sendMessage('Be back 👋😔');
 	players = players.filter((p) => ctx.from.id !== p.chat.from.id);
 	if (!players.length) return;
 	players[0].isAdmin = true;
 	players.map((p) =>
 		p.chat.sendMessage(
-			`${ctx.from.first_name} left the game 😔. There are now ${players.length} players. Game is restarting with ${players[0].chat.from.first_name} as admin`
+			`${ctx.from.first_name} left 🚶‍♀️, Game is restarting with ${players.length} players, ${players[0].chat.from.first_name} is admin`
 		)
 	);
 	reset();
@@ -42,12 +42,10 @@ bot.command('leave', async (ctx) => {
 
 bot.command('start', async (ctx) => {
 	if (isGameStarted)
-		return await ctx.sendMessage(
-			'Game in progress 😕, try again when game is over '
-		);
+		return await ctx.sendMessage('Game in progress 😕, try again later');
 	if (players.length === 0) {
 		await ctx.sendMessage(
-			`Welcome ${ctx.from.first_name} 👋.You are the fist one here, You get to be the admin! 🥳 `
+			`Welcome ${ctx.from.first_name} 👋, You are the first one here, You get to be the admin! 🥳 `
 		);
 		players.push({ isAdmin: true, chat: ctx });
 		return showChoicesQuestion(ctx, true);
@@ -58,13 +56,13 @@ bot.command('start', async (ctx) => {
 	await ctx.sendMessage(
 		`Welcome ${ctx.from.first_name} 👋. ${
 			players[0].chat.from.first_name
-		} is the Admin. They will start the game when all the players are in.\n\nPlayers: ${players.map(
+		} is the admin, Game will start soon\n\n\👤  ${players.map(
 			(l) => l.chat.from.first_name
 		)}, ${ctx.from.first_name}`
 	);
 	players.map((p) =>
 		p.chat.sendMessage(
-			`${ctx.from.first_name} joined the game 😬.\n\nPlayers: ${players
+			`${ctx.from.first_name} joined 🥳\n\n👤 ${players
 				.map((l) => l.chat.from.first_name)
 				.join(',')}, ${ctx.from.first_name}`
 		)
@@ -100,16 +98,16 @@ async function startGame(ctx) {
 	players.map((p, i) => {
 		promises.push(
 			p.chat.sendMessage(
-				`Game has started 👀. \n\nChoices are:\n${choices.join(
-					' , '
-				)}\n\nPlayers are:\n${players.map((p) => p.chat.from.first_name)} `
+				`Game started 👀\n\n🎲 ${choices.join(' , ')}\n\n👤 ${players.map(
+					(p) => p.chat.from.first_name
+				)} `
 			)
 		);
 		promises.push(
 			p.chat.sendMessage(
 				i === chameleonIndex
-					? 'You are the chameleon 😈. shhhh!'
-					: `You are describing "${answer}"`
+					? 'You are the chameleon 🦎! 🤫'
+					: `You are describing *"${answer}"*`
 			)
 		);
 	});
@@ -131,7 +129,7 @@ async function revealChameleonAndEndGame(ctx) {
 		}),
 	];
 	players.map((p, i) => {
-		promises.push(p.chat.sendMessage('The chameleon is ... drum roll 🥁🥁🥁 '));
+		promises.push(p.chat.sendMessage('The chameleon is 🥁🥁🥁 ...'));
 	});
 	await Promise.allSettled(promises);
 
@@ -145,7 +143,7 @@ async function revealChameleonAndEndGame(ctx) {
 
 async function showChoicesQuestion(ctx, first = false) {
 	if (!first) {
-		await ctx.sendMessage(`Current choices are:\n\n ${choices.join(',')}`, {
+		await ctx.sendMessage(`Current choices:\n\n${choices.join(',')}`, {
 			reply_markup: {
 				remove_keyboard: true,
 			},
@@ -153,7 +151,7 @@ async function showChoicesQuestion(ctx, first = false) {
 	}
 	askingChoices = true;
 	await ctx.sendMessage(
-		'Send me comma separated list of choices *Example:* Obama,Clinton,Trump',
+		'Send me comma separated list of choices *Example:* Obama,Trump, ቤቲ',
 		{ parse_mode: 'MarkdownV2' }
 	);
 }
@@ -161,15 +159,12 @@ async function showChoicesQuestion(ctx, first = false) {
 async function setChoices(ctx, list) {
 	choices = list.split(',');
 	askingChoices = false;
-	await ctx.sendMessage(
-		`Choices are set 😁. Start the game whenever you're ready!`,
-		{
-			reply_markup: {
-				keyboard: [
-					[{ text: 'Start game  🚀' }],
-					[{ text: 'Change choices  🎲' }],
-				],
-			},
-		}
-	);
+	await ctx.sendMessage(`Choices set. Start when ready 🚀!`, {
+		reply_markup: {
+			keyboard: [
+				[{ text: 'Start game  🚀' }],
+				[{ text: 'Change choices  🎲' }],
+			],
+		},
+	});
 }
