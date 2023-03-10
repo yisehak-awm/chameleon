@@ -54,9 +54,9 @@ bot.command('start', async (ctx) => {
 		return await ctx.sendMessage('You are already in the game!');
 	}
 	await ctx.sendMessage(
-		`Welcome ${ctx.from.first_name} 👋. ${
+		`Welcome ${ctx.from.first_name} 👋, ${
 			players[0].chat.from.first_name
-		} is the admin, Game will start soon\n\n\👤  ${players.map(
+		} is admin, Game starts soon\n\n\👤  ${players.map(
 			(l) => l.chat.from.first_name
 		)}, ${ctx.from.first_name}`
 	);
@@ -64,7 +64,7 @@ bot.command('start', async (ctx) => {
 		p.chat.sendMessage(
 			`${ctx.from.first_name} joined 🥳\n\n👤 ${players
 				.map((l) => l.chat.from.first_name)
-				.join(',')}, ${ctx.from.first_name}`
+				.join(' ,')}, ${ctx.from.first_name}`
 		)
 	);
 	players.push({ isAdmin: false, chat: ctx });
@@ -98,23 +98,24 @@ async function startGame(ctx) {
 	players.map((p, i) => {
 		promises.push(
 			p.chat.sendMessage(
-				`Game started 👀\n\n🎲 ${choices.join(' , ')}\n\n👤 ${players.map(
-					(p) => p.chat.from.first_name
-				)} `
+				`Game started 🚀\n\n🎲 ${choices.join(' , ')}\n\n👤 ${players
+					.map((p) => p.chat.from.first_name)
+					.join(' , ')} `
 			)
 		);
 		promises.push(
 			p.chat.sendMessage(
 				i === chameleonIndex
-					? 'You are the chameleon 🦎! 🤫'
-					: `You are describing *"${answer}"*`
+					? 'You are the chameleon 🦎🤫'
+					: `🎲 Describing *"${answer}"*`,
+				{ parse_mode: 'MarkdownV2' }
 			)
 		);
 	});
 	await Promise.allSettled(promises);
 	await players
 		.find((p) => p.isAdmin)
-		.chat.sendMessage(`You can reveal chameleon when you're ready 😁`, {
+		.chat.sendMessage(`Reveal the chameleon when ready 😁`, {
 			reply_markup: {
 				keyboard: [[{ text: 'Reveal chameleon  🥁' }]],
 			},
