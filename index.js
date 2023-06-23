@@ -96,10 +96,10 @@ async function startGame(ctx) {
 	players.map((p, i) => {
 		promises.push(
 			p.chat.sendMessage(
-				`Game started 🚀 \n\n ${
+				`Game started 🚀\n\n ${
 					i === chameleonIndex
-						? 'You are the chameleon 🦎🤫'
-						: `🎲 Describing *"${answer}"*`
+						? 'You are the chameleon 🦎'
+						: `👉 Describing *"${answer}"*`
 				} \n\n🎲 ${choices.join(' , ')}`,
 				{ parse_mode: 'MarkdownV2' }
 			)
