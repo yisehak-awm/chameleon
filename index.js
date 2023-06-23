@@ -62,9 +62,7 @@ bot.command('start', async (ctx) => {
 	);
 	players.map((p) =>
 		p.chat.sendMessage(
-			`${ctx.from.first_name} joined 🥳\n\n👤 ${players
-				.map((l) => l.chat.from.first_name)
-				.join(' ,')}, ${ctx.from.first_name}`
+			`${ctx.from.first_name} joined 🥳`
 		)
 	);
 	players.push({ isAdmin: false, chat: ctx });
@@ -98,16 +96,11 @@ async function startGame(ctx) {
 	players.map((p, i) => {
 		promises.push(
 			p.chat.sendMessage(
-				`Game started 🚀\n\n🎲 ${choices.join(' , ')}\n\n👤 ${players
-					.map((p) => p.chat.from.first_name)
-					.join(' , ')} `
-			)
-		);
-		promises.push(
-			p.chat.sendMessage(
-				i === chameleonIndex
-					? 'You are the chameleon 🦎🤫'
-					: `🎲 Describing *"${answer}"*`,
+				`Game started 🚀 \n\n ${
+					i === chameleonIndex
+						? 'You are the chameleon 🦎🤫'
+						: `🎲 Describing *"${answer}"*`
+				} \n\n🎲 ${choices.join(' , ')}`,
 				{ parse_mode: 'MarkdownV2' }
 			)
 		);
@@ -135,7 +128,9 @@ async function revealChameleonAndEndGame(ctx) {
 	await Promise.allSettled(promises);
 
 	players.map((p, i) => {
-		promises.push(p.chat.sendMessage(`${chameleon.chat.from.first_name} 🦎😂`));
+		promises.push(
+			p.chat.sendMessage(`${chameleon.chat.from.first_name} 🦎😂`)
+		);
 	});
 	await Promise.allSettled(promises);
 	reset();
